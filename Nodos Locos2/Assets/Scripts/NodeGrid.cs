@@ -1,6 +1,7 @@
 using System.Collections;
-using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
 public class NodeGrid : MonoBehaviour
 {
@@ -11,20 +12,43 @@ public class NodeGrid : MonoBehaviour
     public GameObject pathMarkerPrefab;
     public GameObject goalMarkerPrefab;
 
-    [Header("Coordenadas del actor (configurables)")]
-    public Vector2Int start = new Vector2Int(0, 0);
-    public Vector2Int goal = new Vector2Int(4, 4);
+    [Header("UI Elements")]
+    public TMP_InputField startCoordinatesInput;
+    public TMP_InputField goalCoordinatesInput;
+    public Button startButton;
 
     private Vector3[,] nodes;
     private GameObject actor;
+    private Vector2Int start;
+    private Vector2Int goal;
 
     void Start()
     {
-        ValidateCoordinates();
-        GenerateGrid();
-        PlaceGoalMarker(goal);
-        actor = Instantiate(actorPrefab, nodes[start.x, start.y], Quaternion.identity);
-        StartCoroutine(MoveActor(start, goal));
+        startButton.onClick.AddListener(OnStartButtonClick);
+    }
+
+    void OnStartButtonClick()
+    {
+        string[] startCoordinates = startCoordinatesInput.text.Split(',');
+        string[] goalCoordinates = goalCoordinatesInput.text.Split(',');
+
+        if (startCoordinates.Length == 2 && goalCoordinates.Length == 2)
+        {
+            start.x = Mathf.Clamp(int.Parse(startCoordinates[0]), 0, rows - 1);
+            start.y = Mathf.Clamp(int.Parse(startCoordinates[1]), 0, cols - 1);
+            goal.x = Mathf.Clamp(int.Parse(goalCoordinates[0]), 0, rows - 1);
+            goal.y = Mathf.Clamp(int.Parse(goalCoordinates[1]), 0, cols - 1);
+
+            ValidateCoordinates();
+            GenerateGrid();
+            PlaceGoalMarker(goal);
+            actor = Instantiate(actorPrefab, nodes[start.x, start.y], Quaternion.identity);
+            StartCoroutine(MoveActor(start, goal));
+        }
+        else
+        {
+            Debug.LogWarning("Por favor, ingrese las coordenadas en el formato correcto (x,y).");
+        }
     }
 
     void GenerateGrid()
@@ -58,11 +82,21 @@ public class NodeGrid : MonoBehaviour
         {
             PlacePathMarker(currentPos);
 
-            if (currentPos.x < goal.x) currentPos.x++;
-            else if (currentPos.x > goal.x) currentPos.x--;
-
-            if (currentPos.y < goal.y) currentPos.y++;
-            else if (currentPos.y > goal.y) currentPos.y--;
+            
+            if (currentPos.x != goal.x)
+            {
+                if (currentPos.x < goal.x)
+                    currentPos.x++;
+                else if (currentPos.x > goal.x)
+                    currentPos.x--;
+            }
+            else if (currentPos.y != goal.y)
+            {
+                if (currentPos.y < goal.y)
+                    currentPos.y++;
+                else if (currentPos.y > goal.y)
+                    currentPos.y--;
+            }
 
             actor.transform.position = nodes[currentPos.x, currentPos.y];
             yield return new WaitForSeconds(0.5f);
