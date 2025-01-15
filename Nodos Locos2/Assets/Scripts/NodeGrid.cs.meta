@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: c6b58b674062f794eb7ae8b2be57fa79
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - actorPrefab: {fileID: 6199643653066031573, guid: 357c8808499f56c42b646a0b0deaf7a1, type: 3}
+  - pathMarkerPrefab: {fileID: 1815908669004592558, guid: 665c9f2705640a24f949d52c1a7896f1, type: 3}
+  - goalMarkerPrefab: {fileID: 4328602882785689330, guid: 959c819c113208446a886312b9b54b86, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
